@@ -26,24 +26,44 @@ npm run dev
 
 Copy `.env` and set:
 
-- `DATABASE_URL` — Postgres connection string.
+- `DATABASE_URL` — Postgres connection string used at runtime.
+- `DIRECT_URL` — Postgres connection string used only by `prisma migrate`. Locally these are
+  identical (one plain Postgres instance); in production they differ — see below.
 - `SESSION_SECRET` — random string, signs the session cookie.
 - `CRON_SECRET` — random string, required as a Bearer token on `/api/cron/nudge`.
 
 ## Deploying the pilot
 
-1. Create a Postgres database (Supabase or Neon both work fine — free tier easily covers
-   15-20 users for 4-6 weeks).
-2. Push this repo to GitHub and import it into Vercel. Vercel deploys the frontend and all
-   API routes together — no separate backend to host.
-3. Set `DATABASE_URL`, `SESSION_SECRET`, and `CRON_SECRET` in the Vercel project's
-   environment variables.
-4. Run `npx prisma migrate deploy` against the production database (or let Vercel's build
-   step do it — see `package.json` if you wire that up).
-5. Edit `prisma/seed.ts` with your real participant names and run `npx prisma db seed`
-   against production to generate their access codes, then send each person their code.
-6. `vercel.json` already schedules `/api/cron/nudge` daily at 13:00 UTC — Vercel Cron sends
-   `Authorization: Bearer $CRON_SECRET` automatically once that env var is set.
+1. **Create the database.** In Supabase: Project Settings → Database → Connection string.
+   Supabase gives you two: a **pooled** one (port `6543`, host has `pooler` in it) and a
+   **direct** one (port `5432`). This matters because Vercel runs your API routes as
+   short-lived serverless functions — without pooling, a burst of requests can exhaust
+   Postgres's connection limit even with only 15-20 users. Prisma's migration engine, on the
+   other hand, needs the direct connection (the pooler doesn't support everything migrations
+   need). Neon has the same pooled/direct split under Connection Details.
+2. **Push this repo to GitHub and import it into Vercel.** Vercel deploys the frontend and
+   all API routes together — no separate backend to host.
+3. **Set four environment variables in the Vercel project** (Settings → Environment
+   Variables):
+   - `DATABASE_URL` = the **pooled** connection string.
+   - `DIRECT_URL` = the **direct** connection string.
+   - `SESSION_SECRET` / `CRON_SECRET` = random strings (e.g. `openssl rand -hex 32`).
+4. **Apply the schema to production** — run this from your machine, pointed at prod (not as
+   part of the Vercel build, which avoids migration races across concurrent deploys):
+   ```bash
+   DATABASE_URL="<pooled-url>" DIRECT_URL="<direct-url>" npx prisma migrate deploy
+   ```
+5. **Seed real pilot users.** Edit `prisma/seed.ts` with actual participant names, then run
+   the same command as above with `APP_BASE_URL="https://<your-deployed-url>"` added and
+   `npx prisma db seed` instead of `migrate deploy`. It prints one ready-to-send link per
+   person — `https://<your-deployed-url>/api/auth/join?code=XXXX` — that logs them straight
+   into their dashboard, no code to type in by hand.
+6. **Deploy** (Vercel does this automatically on push once the repo is imported).
+   `vercel.json` already schedules `/api/cron/nudge` daily at 13:00 UTC — Vercel Cron sends
+   `Authorization: Bearer $CRON_SECRET` automatically once that env var is set. Vercel's free
+   Hobby tier supports daily cron frequency, so no paid plan is needed for this.
+7. **Smoke-test:** open the deployed URL, log in with one seeded access code, and complete a
+   full workout end to end before sending links to real participants.
 
 ## Reviewing pilot data
 

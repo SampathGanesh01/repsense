@@ -10,15 +10,16 @@ const generateCode = customAlphabet("23456789ABCDEFGHJKMNPQRSTUVWXYZ", 8);
 //   npx prisma db seed
 const PILOT_USERS = ["Alex", "Priya", "Sam"];
 
+// Set to your deployed URL (no trailing slash) so the printed output is a
+// ready-to-send one-click link instead of a bare code.
+const APP_BASE_URL = process.env.APP_BASE_URL ?? "http://localhost:3000";
+
 async function main() {
   for (const name of PILOT_USERS) {
     const existing = await db.user.findFirst({ where: { name } });
-    if (existing) {
-      console.log(`${name}: already exists, code ${existing.accessCode}`);
-      continue;
-    }
-    const user = await db.user.create({ data: { name, accessCode: generateCode() } });
-    console.log(`${name}: ${user.accessCode}`);
+    const user = existing ?? (await db.user.create({ data: { name, accessCode: generateCode() } }));
+    const label = existing ? "already exists" : "created";
+    console.log(`${name} (${label}): ${APP_BASE_URL}/api/auth/join?code=${user.accessCode}`);
   }
 }
 
