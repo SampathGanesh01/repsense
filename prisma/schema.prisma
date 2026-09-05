@@ -1,0 +1,121 @@
+// Prisma schema for the fitness-retention pilot app.
+// Boring, small, and denormalized where it saves a join for a 15-20 user pilot.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Exercise {
+  SQUAT
+  PUSHUP
+  LUNGE
+}
+
+enum StreakState {
+  NEW_USER
+  ON_STREAK
+  BROKE_STREAK
+}
+
+enum NudgeChannel {
+  IN_APP
+}
+
+// A pilot participant. No passwords — each user has a private access code
+// (part of their invite link) that logs them in.
+model User {
+  id             String   @id @default(cuid())
+  accessCode     String   @unique
+  name           String
+  createdAt      DateTime @default(now())
+
+  // Cached for cheap dashboard reads; recomputed whenever a Workout completes.
+  currentStreak  Int      @default(0)
+  longestStreak  Int      @default(0)
+  lastActiveDate DateTime? // date-only semantics, stored at UTC midnight
+  consentedAt    DateTime? // set once the user acknowledges the camera-tracking consent notice
+
+  workouts       Workout[]
+  nudges         Nudge[]
+  flags          MiscountFlag[]
+  events         AnalyticsEvent[]
+}
+
+// One workout session. May contain sets across any of the 3 exercises.
+model Workout {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  startedAt   DateTime  @default(now())
+  completedAt DateTime? // null while in progress
+
+  sets        Set[]
+
+  @@index([userId, startedAt])
+}
+
+// One completed set of one exercise within a workout.
+model Set {
+  id               String   @id @default(cuid())
+  workoutId        String
+  workout          Workout  @relation(fields: [workoutId], references: [id])
+  exercise         Exercise
+  repCount         Int
+  // Counts per form-cue key, e.g. {"go_lower": 2, "straight_back": 1}.
+  // A jsonb map is enough for the pilot; no need for a per-rep events table.
+  formCueCounts    Json     @default("{}")
+  lowConfidenceSec Int      @default(0) // seconds of low pose-confidence during this set
+  createdAt        DateTime @default(now())
+
+  flags            MiscountFlag[]
+
+  @@index([workoutId])
+}
+
+// Templated, rules-based nudge sent/shown to a user for a given day.
+model Nudge {
+  id                String       @id @default(cuid())
+  userId            String
+  user              User         @relation(fields: [userId], references: [id])
+  date              DateTime     // date-only, UTC midnight — one nudge per user per day
+  streakState       StreakState
+  templateKey       String
+  message           String       // rendered text, stored so it stays stable through the day
+  channel           NudgeChannel @default(IN_APP)
+  createdAt         DateTime     @default(now())
+  seenAt            DateTime?
+  resultedInWorkout Boolean?     // filled in when a same-day workout completes after this nudge
+
+  @@unique([userId, date])
+}
+
+// Pilot instrumentation only: user-flagged "that rep count looked wrong".
+model MiscountFlag {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  setId     String
+  set       Set      @relation(fields: [setId], references: [id])
+  exercise  Exercise
+  createdAt DateTime @default(now())
+}
+
+// Generic append-only event log for anything not covered by a structured
+// table above (calibration failures, low-confidence warnings shown, nudge
+// sends, etc). Query this for day-1/7/28 activity and nudge-to-completion.
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  eventType String
+  payload   Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([userId, eventType, createdAt])
+}

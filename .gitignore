@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/generated/prisma
+
+# auto-installed by `prisma init` (AI assistant skill docs, not project code)
+/.claude/skills
+/.agents
+/.windsurf
+/skills-lock.json
