@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { inputClass, primaryButtonClass } from "@/lib/ui";
+import { eyebrowClass, inputClass, primaryButtonClass } from "@/lib/ui";
 
 export function AccessCodeForm() {
   const router = useRouter();
@@ -37,8 +37,11 @@ export function AccessCodeForm() {
   return (
     <main className="flex-1 flex items-center justify-center p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-center">Welcome</h1>
-        <p className="text-sm text-neutral-500 text-center">Enter the access code from your invite link.</p>
+        <p className={eyebrowClass("text-center")}>Repsensei</p>
+        <h1 className="font-condensed font-bold text-3xl text-center tracking-tight">Welcome back</h1>
+        <p className="text-sm text-muted text-center leading-relaxed">
+          Enter the access code from your invite link.
+        </p>
         <input
           autoFocus
           value={accessCode}
@@ -50,13 +53,13 @@ export function AccessCodeForm() {
             if (e.key === "Enter") e.currentTarget.form?.requestSubmit();
           }}
           placeholder="Access code"
-          className={inputClass("w-full px-4 py-3 text-lg text-center tracking-wide")}
+          className={inputClass("w-full px-4 py-3 text-lg text-center font-mono tracking-[0.15em]")}
         />
         {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
         <button
           type="submit"
           disabled={loading || accessCode.trim().length === 0}
-          className={primaryButtonClass("py-3")}
+          className={primaryButtonClass("py-3 text-lg")}
         >
           {loading ? "Checking…" : "Continue"}
         </button>
