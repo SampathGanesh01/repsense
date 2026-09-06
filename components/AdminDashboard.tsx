@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { inputClass, primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
+import { cardClass, eyebrowClass, inputClass, pillClass, primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 
 interface AdminUser {
   id: string;
@@ -85,7 +85,10 @@ export function AdminDashboard() {
 
   return (
     <main className="flex-1 max-w-2xl mx-auto w-full p-6 flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold">Admin — invite links</h1>
+      <div>
+        <p className={eyebrowClass()}>Repsensei — Admin</p>
+        <h1 className="font-condensed font-bold text-2xl tracking-tight">Invite links</h1>
+      </div>
 
       <form onSubmit={handleCreate} className="flex gap-3">
         <input
@@ -108,13 +111,13 @@ export function AdminDashboard() {
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
 
       <div className="flex flex-col gap-3">
-        {loading && <p className="text-sm text-neutral-500">Loading…</p>}
-        {!loading && users.length === 0 && <p className="text-sm text-neutral-500">No one invited yet.</p>}
+        {loading && <p className="text-sm text-muted">Loading…</p>}
+        {!loading && users.length === 0 && <p className="text-sm text-muted">No one invited yet.</p>}
         {users.map((user) => (
-          <div key={user.id} className="border border-neutral-300 dark:border-neutral-700 rounded-lg p-4 flex flex-col gap-2">
+          <div key={user.id} className={cardClass("p-4 flex flex-col gap-2")}>
             <div className="flex items-center justify-between">
-              <span className="font-medium">{user.name}</span>
-              <span className="text-xs text-neutral-500">{user.currentStreak}-day streak</span>
+              <span className="font-condensed font-semibold">{user.name}</span>
+              <span className={pillClass(user.currentStreak > 0 ? "quick" : "neutral")}>{user.currentStreak}-day streak</span>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -124,14 +127,14 @@ export function AdminDashboard() {
                 readOnly
                 value={joinLink(user.accessCode)}
                 onFocus={(e) => e.currentTarget.select()}
-                className={inputClass("flex-1 px-3 py-2 text-sm")}
+                className={inputClass("flex-1 px-3 py-2 text-sm font-mono")}
               />
               <button onClick={() => handleCopy(user)} className={secondaryButtonClass("px-4 py-2 text-sm whitespace-nowrap")}>
                 {copiedId === user.id ? "Copied!" : "Copy"}
               </button>
             </div>
             {fallbackId === user.id && (
-              <p className="text-xs text-amber-700 dark:text-amber-400">
+              <p className="text-xs text-accent">
                 Couldn&apos;t copy automatically — the link is selected above, press Ctrl/Cmd+C.
               </p>
             )}
