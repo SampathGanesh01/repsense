@@ -1,16 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { inputClass, primaryButtonClass } from "@/lib/ui";
 
-export function AccessCodeForm() {
+export function AdminLogin() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [accessCode, setAccessCode] = useState("");
-  const [error, setError] = useState<string | null>(
-    searchParams.get("error") === "invalid_code" ? "That invite link's code wasn't recognized." : null,
-  );
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -18,17 +15,17 @@ export function AccessCodeForm() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("/api/auth", {
+      const res = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessCode }),
+        body: JSON.stringify({ password }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setError(data.error ?? "Something went wrong.");
         return;
       }
-      router.push("/dashboard");
+      router.refresh();
     } finally {
       setLoading(false);
     }
@@ -37,28 +34,25 @@ export function AccessCodeForm() {
   return (
     <main className="flex-1 flex items-center justify-center p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-center">Welcome</h1>
-        <p className="text-sm text-neutral-500 text-center">Enter the access code from your invite link.</p>
+        <h1 className="text-2xl font-semibold text-center">Admin</h1>
         <input
           autoFocus
-          value={accessCode}
-          onChange={(e) => setAccessCode(e.target.value)}
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           onKeyDown={(e) => {
-            // Belt-and-suspenders: don't rely solely on the browser's native
-            // implicit-submit-on-Enter behavior, which can be unreliable
-            // depending on browser/autofill state.
             if (e.key === "Enter") e.currentTarget.form?.requestSubmit();
           }}
-          placeholder="Access code"
+          placeholder="Admin password"
           className={inputClass("w-full px-4 py-3 text-lg text-center tracking-wide")}
         />
         {error && <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>}
         <button
           type="submit"
-          disabled={loading || accessCode.trim().length === 0}
+          disabled={loading || password.length === 0}
           className={primaryButtonClass("py-3")}
         >
-          {loading ? "Checking…" : "Continue"}
+          {loading ? "Checking…" : "Sign in"}
         </button>
       </form>
     </main>

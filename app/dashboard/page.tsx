@@ -6,6 +6,7 @@ import { effectiveCurrentStreak } from "@/lib/streak";
 import { EXERCISE_KEYS, EXERCISES } from "@/lib/pose/exercises";
 import { StreakCalendar } from "@/components/StreakCalendar";
 import { NudgeBanner } from "@/components/NudgeBanner";
+import { secondaryButtonClass } from "@/lib/ui";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -42,7 +43,7 @@ export default async function DashboardPage() {
           <Link
             key={key}
             href={`/workout/${key.toLowerCase()}`}
-            className="border rounded-lg px-4 py-4 flex items-center justify-between hover:bg-neutral-50"
+            className={secondaryButtonClass("px-4 py-4 flex items-center justify-between")}
           >
             <span className="font-medium">{EXERCISES[key].label}</span>
             <span className="text-neutral-400">→</span>
