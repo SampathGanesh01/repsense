@@ -8,6 +8,7 @@ import { checkCalibration, trackingConfidence } from "@/lib/pose/calibration";
 import { RepCounter } from "@/lib/pose/repCounter";
 import { EXERCISES, CUE_MESSAGES } from "@/lib/pose/exercises";
 import { HoldTrigger, isArmsCrossed, isHandsRaised } from "@/lib/pose/gestures";
+import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 import type { ExerciseKey, CueKey, PoseFrame } from "@/lib/pose/types";
 
 type Stage = "consent" | "calibrating" | "active" | "setSummary";
@@ -196,15 +197,15 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
         <button
           onClick={flagMiscount}
           disabled={flagged}
-          className="text-xl underline text-neutral-500 disabled:opacity-40"
+          className="text-xl underline text-neutral-500 dark:text-neutral-400 disabled:opacity-40"
         >
           {flagged ? "Thanks, noted." : "That count looked wrong"}
         </button>
         <div className="flex flex-col gap-4 w-full max-w-sm mt-4">
-          <button onClick={doAnotherSet} className="border rounded-lg py-6 text-2xl font-medium">
+          <button onClick={doAnotherSet} className={secondaryButtonClass("py-6 text-2xl")}>
             Do another {definition.label.toLowerCase()} set
           </button>
-          <button onClick={finishWorkout} className="bg-black text-white rounded-lg py-6 text-2xl font-medium">
+          <button onClick={finishWorkout} className={primaryButtonClass("py-6 text-2xl")}>
             Finish workout
           </button>
         </div>
@@ -247,14 +248,10 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
           {!lowConfidence && cueMessage && (
             <p className="text-2xl text-neutral-700 bg-neutral-100 rounded-lg px-4 py-3 text-center">{cueMessage}</p>
           )}
-          <button
-            onClick={endSet}
-            disabled={savingSet}
-            className="border rounded-lg py-6 px-12 text-2xl font-medium disabled:opacity-40"
-          >
+          <button onClick={endSet} disabled={savingSet} className={secondaryButtonClass("py-6 px-12 text-2xl")}>
             {savingSet ? "Saving…" : "End set"}
           </button>
-          <p className="text-lg text-neutral-400">or cross your arms to stop</p>
+          <p className="text-lg text-neutral-500 dark:text-neutral-400">or cross your arms to stop</p>
         </div>
       )}
     </main>

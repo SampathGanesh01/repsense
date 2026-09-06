@@ -1,5 +1,7 @@
 "use client";
 
+import { primaryButtonClass } from "@/lib/ui";
+
 interface ConsentModalProps {
   onAcknowledge: () => void;
 }
@@ -14,7 +16,7 @@ export function ConsentModal({ onAcknowledge }: ConsentModalProps) {
           it can count your reps and check your form. Your video is never recorded, saved, or sent anywhere — only
           your rep counts and workout stats are stored.
         </p>
-        <button onClick={onAcknowledge} className="bg-black text-white rounded-lg py-3 font-medium">
+        <button onClick={onAcknowledge} className={primaryButtonClass("py-3")}>
           I understand — turn on camera
         </button>
       </div>
