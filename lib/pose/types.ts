@@ -19,6 +19,9 @@ export interface RepResult {
 export interface ExerciseDefinition {
   key: ExerciseKey;
   label: string;
+  // Public YouTube "watch" URL for the how-to-do-it popup shown on the
+  // workout screen.
+  demoVideoUrl: string;
   // Landmark indices that must be visible/confident for this exercise's
   // angles to be meaningful. Checked against a visibility threshold.
   requiredLandmarks: number[];

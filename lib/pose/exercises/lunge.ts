@@ -22,6 +22,7 @@ function minKneeAngle(frame: PoseFrame): number | null {
 export const lunge: ExerciseDefinition = {
   key: "LUNGE",
   label: "Lunge",
+  demoVideoUrl: "https://www.youtube.com/watch?v=HS5GoIKwlS0",
   requiredLandmarks: [],
 
   primaryAngle(frame) {

@@ -6,6 +6,7 @@ import { effectiveCurrentStreak } from "@/lib/streak";
 import { EXERCISE_KEYS, EXERCISES } from "@/lib/pose/exercises";
 import { StreakCalendar } from "@/components/StreakCalendar";
 import { NudgeBanner } from "@/components/NudgeBanner";
+import { RequestExerciseButton } from "@/components/RequestExerciseButton";
 import { cardClass, eyebrowClass, sectionTitleClass } from "@/lib/ui";
 
 export default async function DashboardPage() {
@@ -48,6 +49,10 @@ export default async function DashboardPage() {
             <span className="text-accent">→</span>
           </Link>
         ))}
+      </section>
+
+      <section>
+        <RequestExerciseButton />
       </section>
     </main>
   );

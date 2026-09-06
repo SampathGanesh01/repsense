@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cardClass, eyebrowClass, inputClass, pillClass, primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
+import { AdminExerciseRequests } from "./AdminExerciseRequests";
 
 interface AdminUser {
   id: string;
@@ -141,6 +142,8 @@ export function AdminDashboard() {
           </div>
         ))}
       </div>
+
+      <AdminExerciseRequests />
     </main>
   );
 }
