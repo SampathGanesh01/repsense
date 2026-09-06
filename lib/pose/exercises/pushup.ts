@@ -4,6 +4,7 @@ import type { CueKey, ExerciseDefinition } from "../types";
 export const pushup: ExerciseDefinition = {
   key: "PUSHUP",
   label: "Push-up",
+  demoVideoUrl: "https://www.youtube.com/watch?v=sos1-Gr7cPw",
   requiredLandmarks: [],
 
   primaryAngle(frame) {

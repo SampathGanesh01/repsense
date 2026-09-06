@@ -42,10 +42,11 @@ model User {
   lastActiveDate DateTime? // date-only semantics, stored at UTC midnight
   consentedAt    DateTime? // set once the user acknowledges the camera-tracking consent notice
 
-  workouts       Workout[]
-  nudges         Nudge[]
-  flags          MiscountFlag[]
-  events         AnalyticsEvent[]
+  workouts         Workout[]
+  nudges           Nudge[]
+  flags            MiscountFlag[]
+  events           AnalyticsEvent[]
+  exerciseRequests ExerciseRequest[]
 }
 
 // One workout session. May contain sets across any of the 3 exercises.
@@ -105,6 +106,20 @@ model MiscountFlag {
   set       Set      @relation(fields: [setId], references: [id])
   exercise  Exercise
   createdAt DateTime @default(now())
+}
+
+// Pilot instrumentation only: a participant asking for an exercise we don't
+// support yet. Free-text name (not the Exercise enum) since it's whatever
+// the user typed, not necessarily one of SQUAT/PUSHUP/LUNGE.
+model ExerciseRequest {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  exerciseName String
+  videoUrl     String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
 }
 
 // Generic append-only event log for anything not covered by a structured

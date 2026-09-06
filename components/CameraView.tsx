@@ -2,20 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PoseTracker } from "@/lib/pose/poseClient";
+import { drawSkeleton } from "@/lib/pose/skeletonOverlay";
 import type { PoseFrame } from "@/lib/pose/types";
-
-// A minimal set of BlazePose connections, enough to draw a recognizable
-// skeleton overlay — this is purely visual feedback so users can see
-// they're being tracked, not used for any measurement.
-const SKELETON_CONNECTIONS: Array<[number, number]> = [
-  [11, 12], // shoulders
-  [11, 13], [13, 15], // left arm
-  [12, 14], [14, 16], // right arm
-  [11, 23], [12, 24], // torso sides
-  [23, 24], // hips
-  [23, 25], [25, 27], // left leg
-  [24, 26], [26, 28], // right leg
-];
 
 interface CameraViewProps {
   onFrame: (frame: PoseFrame | null) => void;
@@ -74,21 +62,7 @@ export function CameraView({ onFrame }: CameraViewProps) {
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (!frame) return;
-
-      ctx.strokeStyle = "#22d3ee";
-      ctx.lineWidth = 7;
-      for (const [a, b] of SKELETON_CONNECTIONS) {
-        const pa = frame[a];
-        const pb = frame[b];
-        if (!pa || !pb) continue;
-        if ((pa.visibility ?? 1) < 0.4 || (pb.visibility ?? 1) < 0.4) continue;
-        ctx.beginPath();
-        ctx.moveTo(pa.x * canvas.width, pa.y * canvas.height);
-        ctx.lineTo(pb.x * canvas.width, pb.y * canvas.height);
-        ctx.stroke();
-      }
+      drawSkeleton(ctx, frame, canvas.width, canvas.height);
     }
 
     setup();

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CameraView } from "./CameraView";
 import { ConsentModal } from "./ConsentModal";
+import { ExerciseDemoModal } from "./ExerciseDemoModal";
 import { checkCalibration, trackingConfidence } from "@/lib/pose/calibration";
 import { RepCounter } from "@/lib/pose/repCounter";
 import { EXERCISES, CUE_MESSAGES } from "@/lib/pose/exercises";
@@ -34,6 +35,7 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
   const [lastSetId, setLastSetId] = useState<string | null>(null);
   const [flagged, setFlagged] = useState(false);
   const [savingSet, setSavingSet] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   const workoutIdRef = useRef<string | null>(null);
   const repCounterRef = useRef<RepCounter | null>(null);
@@ -217,11 +219,22 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
 
   return (
     <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 flex flex-col gap-8">
-      <div>
-        <p className={eyebrowClass()}>Workout</p>
-        <h1 className="font-condensed font-bold text-4xl tracking-tight">{definition.label}</h1>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className={eyebrowClass()}>Workout</p>
+          <h1 className="font-condensed font-bold text-4xl tracking-tight">{definition.label}</h1>
+        </div>
+        <button onClick={() => setShowDemo(true)} className={secondaryButtonClass("px-4 py-2 text-sm whitespace-nowrap")}>
+          How to do it
+        </button>
       </div>
       <CameraView onFrame={stage === "active" ? handleActiveFrame : handleCalibrationFrame} />
+      <ExerciseDemoModal
+        open={showDemo}
+        onClose={() => setShowDemo(false)}
+        label={definition.label}
+        videoUrl={definition.demoVideoUrl}
+      />
 
       {stage === "calibrating" && (
         <div className="flex flex-col gap-4 items-center">
