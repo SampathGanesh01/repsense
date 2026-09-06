@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { inputClass, primaryButtonClass } from "@/lib/ui";
+import { eyebrowClass, inputClass, primaryButtonClass } from "@/lib/ui";
 
 export function AdminLogin() {
   const router = useRouter();
@@ -34,7 +34,8 @@ export function AdminLogin() {
   return (
     <main className="flex-1 flex items-center justify-center p-6">
       <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-4">
-        <h1 className="text-2xl font-semibold text-center">Admin</h1>
+        <p className={eyebrowClass("text-center")}>Repsensei</p>
+        <h1 className="font-condensed font-bold text-3xl text-center tracking-tight -mt-1">Admin</h1>
         <input
           autoFocus
           type="password"

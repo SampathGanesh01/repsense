@@ -8,7 +8,7 @@ import { checkCalibration, trackingConfidence } from "@/lib/pose/calibration";
 import { RepCounter } from "@/lib/pose/repCounter";
 import { EXERCISES, CUE_MESSAGES } from "@/lib/pose/exercises";
 import { HoldTrigger, isArmsCrossed, isHandsRaised } from "@/lib/pose/gestures";
-import { primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
+import { eyebrowClass, primaryButtonClass, secondaryButtonClass } from "@/lib/ui";
 import type { ExerciseKey, CueKey, PoseFrame } from "@/lib/pose/types";
 
 type Stage = "consent" | "calibrating" | "active" | "setSummary";
@@ -192,12 +192,12 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
   if (stage === "setSummary") {
     return (
       <main className="flex-1 max-w-3xl mx-auto w-full p-8 flex flex-col gap-8 items-center justify-center text-center">
-        <h1 className="text-8xl font-bold tabular-nums">{repCount} reps</h1>
-        <p className="text-2xl text-neutral-500">{definition.label} set complete.</p>
+        <h1 className="font-mono text-8xl font-semibold tabular-nums">{repCount} reps</h1>
+        <p className="text-2xl text-muted">{definition.label} set complete.</p>
         <button
           onClick={flagMiscount}
           disabled={flagged}
-          className="text-xl underline text-neutral-500 dark:text-neutral-400 disabled:opacity-40"
+          className="text-xl underline text-muted disabled:opacity-40"
         >
           {flagged ? "Thanks, noted." : "That count looked wrong"}
         </button>
@@ -217,18 +217,19 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
 
   return (
     <main className="flex-1 max-w-5xl mx-auto w-full p-4 sm:p-6 flex flex-col gap-8">
-      <h1 className="text-4xl font-bold">{definition.label}</h1>
+      <div>
+        <p className={eyebrowClass()}>Workout</p>
+        <h1 className="font-condensed font-bold text-4xl tracking-tight">{definition.label}</h1>
+      </div>
       <CameraView onFrame={stage === "active" ? handleActiveFrame : handleCalibrationFrame} />
 
       {stage === "calibrating" && (
         <div className="flex flex-col gap-4 items-center">
-          {calibrationMessage && (
-            <p className="text-3xl text-center text-neutral-600 min-h-[2.5rem]">{calibrationMessage}</p>
-          )}
+          {calibrationMessage && <p className="text-3xl text-center text-muted min-h-[2.5rem]">{calibrationMessage}</p>}
           {calibrationOk && (
             <button
               onClick={startSet}
-              className="text-4xl font-semibold animate-pulse cursor-pointer bg-transparent border-none"
+              className="font-condensed text-4xl font-semibold text-accent animate-pulse cursor-pointer bg-transparent border-none"
             >
               🙌 Raise both hands to start
             </button>
@@ -238,20 +239,20 @@ export function WorkoutSession({ exerciseKey, consented }: WorkoutSessionProps) 
 
       {stage === "active" && (
         <div className="flex flex-col gap-4 items-center">
-          <div className="text-8xl font-bold tabular-nums">{repCount}</div>
+          <div className="font-mono text-8xl font-semibold tabular-nums">{repCount}</div>
           {lowConfidence && (
-            <p className="text-2xl text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-center">
+            <p className="text-2xl bg-accent-soft text-accent border-l-4 border-l-accent rounded-md px-4 py-3 text-center">
               Having trouble tracking you clearly — check your lighting or step back into frame. Rep counting is
               paused until tracking recovers.
             </p>
           )}
           {!lowConfidence && cueMessage && (
-            <p className="text-2xl text-neutral-700 bg-neutral-100 rounded-lg px-4 py-3 text-center">{cueMessage}</p>
+            <p className="text-2xl bg-teal-soft text-teal rounded-md px-4 py-3 text-center">{cueMessage}</p>
           )}
           <button onClick={endSet} disabled={savingSet} className={secondaryButtonClass("py-6 px-12 text-2xl")}>
             {savingSet ? "Saving…" : "End set"}
           </button>
-          <p className="text-lg text-neutral-500 dark:text-neutral-400">or cross your arms to stop</p>
+          <p className="text-lg text-muted">or cross your arms to stop</p>
         </div>
       )}
     </main>

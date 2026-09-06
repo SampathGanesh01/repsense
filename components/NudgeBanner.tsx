@@ -15,7 +15,7 @@ export function NudgeBanner() {
   if (!message) return null;
 
   return (
-    <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg px-4 py-3 text-sm">
+    <div className="bg-accent-soft border-l-4 border-l-accent text-ink rounded-md px-4 py-3 text-sm leading-relaxed">
       {message}
     </div>
   );

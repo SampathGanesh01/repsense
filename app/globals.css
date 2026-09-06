@@ -1,26 +1,102 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens modeled on the reference report-style design language:
+ * warm paper background, IBM Plex type family, a burnt-orange accent,
+ * teal/quick/strategic secondary accents, and card surfaces with a
+ * left accent border. Same light/dark structure as before (system
+ * preference by default, [data-theme] can force either).
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #eeede7;
+  --surface: #ffffff;
+  --ink: #1d211f;
+  --muted: #6b7370;
+  --line: #dad9d2;
+  --line-strong: #c3c2b9;
+  --accent: #b8541b;
+  --accent-soft: #f0dcce;
+  --teal: #2b6777;
+  --teal-soft: #dde9eb;
+  --quick: #4b7a4f;
+  --quick-soft: #dfe9df;
+  --strategic: #47548a;
+  --strategic-soft: #e1e2ee;
+  --shadow-color: 29, 33, 31;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --paper: #14181a;
+    --surface: #1b2023;
+    --ink: #e7e7e2;
+    --muted: #8b948f;
+    --line: #2b3234;
+    --line-strong: #3a4245;
+    --accent: #e2793d;
+    --accent-soft: #3a2818;
+    --teal: #7fb8c4;
+    --teal-soft: #1c2f33;
+    --quick: #8fc494;
+    --quick-soft: #22301f;
+    --strategic: #9aa4e0;
+    --strategic-soft: #232640;
+    --shadow-color: 0, 0, 0;
   }
 }
 
+:root[data-theme="dark"] {
+  --paper: #14181a;
+  --surface: #1b2023;
+  --ink: #e7e7e2;
+  --muted: #8b948f;
+  --line: #2b3234;
+  --line-strong: #3a4245;
+  --accent: #e2793d;
+  --accent-soft: #3a2818;
+  --teal: #7fb8c4;
+  --teal-soft: #1c2f33;
+  --quick: #8fc494;
+  --quick-soft: #22301f;
+  --strategic: #9aa4e0;
+  --strategic-soft: #232640;
+  --shadow-color: 0, 0, 0;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-teal: var(--teal);
+  --color-teal-soft: var(--teal-soft);
+  --color-quick: var(--quick);
+  --color-quick-soft: var(--quick-soft);
+  --color-strategic: var(--strategic);
+  --color-strategic-soft: var(--strategic-soft);
+
+  --font-sans: var(--font-plex-sans);
+  --font-condensed: var(--font-plex-sans-condensed);
+  --font-mono: var(--font-plex-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-plex-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.card-shadow {
+  box-shadow:
+    0 1px 2px rgba(var(--shadow-color), 0.06),
+    0 8px 24px -12px rgba(var(--shadow-color), 0.18);
 }

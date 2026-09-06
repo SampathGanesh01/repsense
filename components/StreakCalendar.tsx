@@ -25,9 +25,9 @@ export function StreakCalendar({ completedDates, days = 28 }: StreakCalendarProp
           key={cell.key}
           title={cell.key}
           className={[
-            "aspect-square rounded-md flex items-center justify-center text-xs font-medium",
-            cell.done ? "bg-emerald-500 text-white" : "bg-neutral-100 text-neutral-400",
-            cell.isToday ? "ring-2 ring-offset-1 ring-black" : "",
+            "aspect-square rounded-md flex items-center justify-center text-xs font-mono font-medium",
+            cell.done ? "bg-quick text-white" : "bg-surface text-muted border border-line",
+            cell.isToday ? "ring-2 ring-offset-1 ring-offset-paper ring-accent" : "",
           ].join(" ")}
         >
           {cell.label}
