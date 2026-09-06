@@ -4,6 +4,7 @@ import type { CueKey, ExerciseDefinition } from "../types";
 export const squat: ExerciseDefinition = {
   key: "SQUAT",
   label: "Squat",
+  demoVideoUrl: "https://www.youtube.com/watch?v=LJH8WKtmMpo",
   requiredLandmarks: [], // resolved dynamically per-side in primaryAngle
 
   primaryAngle(frame) {

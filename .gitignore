@@ -47,3 +47,6 @@ next-env.d.ts
 /.agents
 /.windsurf
 /skills-lock.json
+
+# reference videos for /admin/pose-test — large binaries, not project code
+/test_videos
